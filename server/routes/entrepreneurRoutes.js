@@ -1,11 +1,13 @@
 const express = require('express');
-const { entrepreneurLogin } = require('../controllers/userAuth');
+const { entrepreneurLogin, entrepreneurRefreshtoken, logout, entrepreneurSignup } = require('../controllers/userAuth');
 const router = express.Router();
 
 router.post('/entrepreneur-login', entrepreneurLogin);
 
-router.post('/refresh_token', refreshtoken);
+router.post('/entrepreneur-signup', entrepreneurSignup);
+
+router.post('/refresh_token', entrepreneurRefreshtoken);
 
 router.post('/logout', logout);
 
-module.exports = router;
+module.exports = router; 

@@ -6,7 +6,7 @@ const {
     createRefreshToken,
     sendAccessToken,
     sendRefreshToken,
-} = require('../middlewares/tokens');
+} = require('../middleware/token');
 const Investor = require("../models/investor");
 const Entrepreneur = require("../models/entrepreneur");
 
@@ -23,7 +23,7 @@ exports.investorLogin = async (req, res) => {
 
         try {
             const investor = await Investor.findOne({ where: { InvestorEmail: investorEmail } });
-            if (!user) throw new Error("User does not exist.");
+            if (!investor) throw new Error("User does not exist.");
 
             const accesstoken = createAccessToken(investor.Id);
             const refreshtoken = createRefreshToken(investor.Id);
@@ -32,9 +32,9 @@ exports.investorLogin = async (req, res) => {
                 { InvestorToken: refreshtoken },
                 { where: { InvestorEmail: investorEmail } }
             );
-            console.log(user);
+            console.log(investor);
 
-            sendRefreshToken(req, res, refreshtoken);
+            sendRefreshToken(res, refreshtoken);
             sendAccessToken(req, res, accesstoken);
 
 
@@ -63,19 +63,19 @@ exports.entrepreneurLogin = async (req, res) => {
         }
 
         try {
-            const entrepreneur = await Entrepreneur.findOne({ where: { EntrepreneurEmail: entrepreneuremail } });
-            if (!user) throw new Error("User does not exist.");
+            const entrepreneur = await Entrepreneur.findOne({ where: { EntrepreneurEmail: entrepreneurEmail } });
+            if (!entrepreneur) throw new Error("User does not exist.");
 
             const accesstoken = createAccessToken(entrepreneur.Id);
-            const refreshtoken = createRefreshToken(entrepreneur.Users_Id);
+            const refreshtoken = createRefreshToken(entrepreneur.Id);
 
             await Entrepreneur.update(
                 { EntrepreneurToken: refreshtoken },
                 { where: { EntrepreneurEmail: entrepreneurEmail } }
             );
-            console.log(user);
+            console.log(entrepreneur);
 
-            sendRefreshToken(req, res, refreshtoken);
+            sendRefreshToken(res, refreshtoken);
             sendAccessToken(req, res, accesstoken);
 
 
@@ -83,12 +83,14 @@ exports.entrepreneurLogin = async (req, res) => {
             res.send({
                 error: `${err.message}`,
             });
+            console.log(err)
         }
 
     } catch (err) {
         res.send({
             error: `${err.message}`,
         });
+        console.log(err)
     }
 };
 
@@ -170,31 +172,30 @@ exports.investorSignup = async (req, res) => {
     try {
 
         const {
-            investorFirstName,
-            investorLastName,
-            investorEmail,
-            investorPassword
+            InvestorFirstName,
+            InvestorLastName,
+            InvestorEmail,
+            InvestorPassword
         } = req.body;
 
         //validation 
-        if (!investorFirstName) return res.status(400).send("investor first name is required");
-        if (!investorLastName) return res.status(400).send("investor last name is required");
-        if (!investorEmail) return res.status(400).send("email is required");
-        if (!investorPassword) return res.status(400).send("password is required");
+        if (!InvestorFirstName) return res.status(400).send("investor first name is required");
+        if (!InvestorLastName) return res.status(400).send("investor last name is required");
+        if (!InvestorEmail) return res.status(400).send("email is required");
+        if (!InvestorPassword) return res.status(400).send("password is required");
 
-
-        if (!investorPassword || investorPassword.length < 6) {
+        if (!InvestorPassword || InvestorPassword.length < 6) {
             return res
                 .status(400)
                 .send("password is required and should be min 6 characters long");
         }
 
         const investorSignup = await Investor.create({
-            investorFirstName,
-            investorLastName,
-            investorEmail,
-            investorPassword
-        });
+            InvestorFirstName,
+            InvestorLastName,
+            InvestorEmail,
+            InvestorPassword
+        })
 
 
 
@@ -211,30 +212,30 @@ exports.entrepreneurSignup = async (req, res) => {
     try {
 
         const {
-            entrepreneurFirstName,
-            entrepreneurLastName,
-            entrepreneurEmail,
-            entrepreneurPassword
+            EntrepreneurFirstName,
+            EntrepreneurLastName,
+            EntrepreneurEmail,
+            EntrepreneurPassword
         } = req.body;
 
         //validation 
-        if (!entrepreneurFirstName) return res.status(400).send("entrepreneur first name is required");
-        if (!entrepreneurLastName) return res.status(400).send("entrepreneur last name is required");
-        if (!entrepreneurEmail) return res.status(400).send("email is required");
-        if (!entrepreneurPassword) return res.status(400).send("password is required");
+        if (!EntrepreneurFirstName) return res.status(400).send("entrepreneur first name is required");
+        if (!EntrepreneurLastName) return res.status(400).send("entrepreneur last name is required");
+        if (!EntrepreneurEmail) return res.status(400).send("email is required");
+        if (!EntrepreneurPassword) return res.status(400).send("password is required");
 
 
-        if (!entrepreneurPassword || entrepreneurPassword.length < 6) {
+        if (!EntrepreneurPassword || EntrepreneurPassword.length < 6) {
             return res
                 .status(400)
                 .send("password is required and should be min 6 characters long");
         }
 
-        const entrepreneurSignup = await entrepreneur.create({
-            entrepreneurFirstName,
-            entrepreneurLastName,
-            entrepreneurEmail,
-            entrepreneurPassword
+        const entrepreneurSignup = await Entrepreneur.create({
+            EntrepreneurFirstName,
+            EntrepreneurLastName,
+            EntrepreneurEmail,
+            EntrepreneurPassword
         });
 
 

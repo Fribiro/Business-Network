@@ -25,7 +25,7 @@ const sendRefreshToken = (res, refreshtoken) => {
         //set cookie to httpOnly to ensure we can't access it from the client or modify it with javascript
         httpOnly: true,
         //set path so that the cookie isn't sent with each request but only when we're in the refresh_token endpoint
-        path: "/auth/refresh_token",
+        path: "/api/refresh_token",
     });
 };
 

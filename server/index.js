@@ -10,8 +10,25 @@ app.use(cookieParser());
 dotenv.config();
 const PORT = process.env.PORT || 5001;
 
+app.use(function (req, res, next) {
+    res.header(
+        "Access-Control-Allow-Origin",
+        "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, x-access-token, Content-Type, Accept"
+    );
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 //allow the client to communicate with the api
-app.use(cors());
+const corsOptions = {
+    origin: true,
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 
 //Parse JSON bodies as sent by API clients
 app.use(express.json());
@@ -20,7 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 //get all routes from the routes folder
-//readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
+readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
 //create respective tables from models
 const investor = require('./models/investor');
