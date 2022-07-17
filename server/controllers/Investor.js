@@ -1,5 +1,5 @@
 const mysql = require("mysql2");
-const Investor = require("../models/investor");
+const Investor = require("../models/Investor");
 
 module.exports = {
     async GetInvestorById(req, res) {
