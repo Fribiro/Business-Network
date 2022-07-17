@@ -40,11 +40,27 @@ app.use(express.urlencoded({extended: true}));
 readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
 //create respective tables from models
-const investor = require('./models/investor');
-const entrepreneur = require('./models/entrepreneur');
+const investor = require('./models/Investor');
+const entrepreneur = require('./models/Entrepreneur');
+const role = require('./models/Role');
+const user = require('./models/User');
+
+//one to may relationship
+role.hasMany(user, {
+    foreignKey: 'userId',
+    as: 'User'
+})
+
+user.belongsTo(role, {
+    foreignKey: 'userId',
+    as: 'Role'
+})
 
 investor.sync();
 entrepreneur.sync();
+role.sync();
+user.sync();
+//sequelize.sync({ force: true });
 console.log("All models were synchronized successfully.");
 
 app.listen(PORT, () => {
